@@ -1,6 +1,7 @@
 package views;
 
 import Controllers.huespedController;
+import Controllers.reservasController;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -14,21 +15,25 @@ public class reservas extends javax.swing.JDialog {
     reservasModel reservamodel;
     int aux = 0;
     huespedController huespedcontroller;
+    reservasController reservacontroller;
 
     public reservas(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        huespedcontroller = new huespedController();
         setSize(1120, 610);
         setLocationRelativeTo(this);
+        desHabilitarCampos();
 
+    }
+
+    private void desHabilitarCampos() {
         txtNombres.setEnabled(false);
         txtIdentificacion.setEnabled(false);
         fechaNacido.setEnabled(false);
         txtTelefonos.setEnabled(false);
         btnGuardar.setEnabled(false);
         txtNumeroReserva.setEnabled(false);
-
+        txtValorReserva.setEnabled(false);
     }
 
     private void activarGuardarHuesped() {
@@ -37,26 +42,31 @@ public class reservas extends javax.swing.JDialog {
         fechaNacido.setEnabled(true);
         txtTelefonos.setEnabled(true);
         btnGuardar.setEnabled(true);
-
-        txtNumeroReserva.setText(String.valueOf(huespedcontroller.buscarMaximoIdReserva() + 1));
+        huespedcontroller = new huespedController();
+        String maximoId = String.valueOf(huespedcontroller.buscarMaximoIdReserva() + 1);
+        txtNumeroReserva.setText(maximoId);
 
     }
 
     private void calcularValorReserva(java.beans.PropertyChangeEvent evt) {
 
         if (aux > 0) {
-            LocalDate inicio = convertirFecha(fechaInicial.getDate());
-            LocalDate fin = convertirFecha(fechaFinal.getDate());
-            reservamodel = new reservasModel(inicio, fin);
-            double total = reservamodel.valorTotalReservas();
+            Date inicial = fechaInicial.getDate();
+            if (inicial != null) {
+                LocalDate inicio = convertirFecha(inicial);
+                LocalDate fin = convertirFecha(fechaFinal.getDate());
+                reservamodel = new reservasModel(inicio, fin);
+                double total = reservamodel.valorTotalReservas();
 
-            if (total > 0) {
-                String valorFinal = String.valueOf(total);
+                if (total > 0) {
+                    String valorFinal = String.valueOf(total);
 
-                txtValorReserva.setText(valorFinal);
-            } else {
-                JOptionPane.showMessageDialog(null, "Esta eligiendo fecha final incorrecta");
+                    txtValorReserva.setText(valorFinal);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Esta eligiendo fecha final incorrecta");
+                }
             }
+
         }
         aux++;
 
@@ -78,6 +88,7 @@ public class reservas extends javax.swing.JDialog {
 
             huesped huesped = new huesped(Integer.parseInt(txtIdentificacion.getText()),
                     txtNombres.getText(), nacido, txtTelefonos.getText());
+            huespedcontroller = new huespedController();
             rsp = huespedcontroller.guardar(huesped);
             huespedcontroller.cerrarConexion();
         } catch (Exception dt) {
@@ -85,6 +96,73 @@ public class reservas extends javax.swing.JDialog {
         }
 
         return rsp;
+    }
+
+    private boolean guardarReserva() {
+        boolean rsp = false;
+        try {
+            LocalDate inicioFecha = convertirFecha(fechaInicial.getDate());
+            LocalDate finalFecha = convertirFecha(fechaFinal.getDate());
+
+            reservasModel reservas = new reservasModel(inicioFecha, finalFecha,
+                    (String) comboFormaPago.getSelectedItem(),
+                    Integer.parseInt(txtIdentificacion.getText()));
+
+            reservacontroller = new reservasController();
+            reservacontroller.guardarReserva(reservas);
+            reservacontroller.cerrarConexion();
+            rsp = true;
+        } catch (Exception e) {
+            System.out.println("error " + e.getMessage());
+        }
+
+        return rsp;
+    }
+
+    private boolean validarCamposReserva() {
+        boolean camposValidos = false;
+
+        if (fechaInicial.getDate() == null) {
+            JOptionPane.showMessageDialog(null, "Debe Elegir la fecha Inicial");
+        } else if (fechaFinal.getDate() == null) {
+            JOptionPane.showMessageDialog(null, "Debe Elegir la fecha Final");
+        } else if (comboFormaPago.getSelectedItem().equals("SELECCIONE")) {
+            JOptionPane.showMessageDialog(null, "Debe Elegir forma de pago");
+        } else {
+            camposValidos = true;
+        }
+
+        return camposValidos;
+
+    }
+
+    private boolean validarCamposGuardar() {
+        boolean camposValidos = false;
+        if (txtIdentificacion.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Debe escribir numero de identificacion del Huesped");
+            txtIdentificacion.requestFocus();
+        } else if (txtNombres.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Debe escribir nombres de huesped");
+            txtNombres.requestFocus();
+        } else if (fechaNacido.getDate() == null) {
+            JOptionPane.showMessageDialog(null, "Debe frecha de nacimiento");
+        } else {
+            camposValidos = true;
+        }
+        return camposValidos;
+    }
+
+    private void limpiarCampos() {
+        fechaInicial.setDate(null);
+        fechaInicial.setDate(null);
+        txtValorReserva.setText(null);
+        comboFormaPago.setSelectedIndex(0);
+        txtNumeroReserva.setText(null);
+        txtIdentificacion.setText(null);
+        txtNombres.setText(null);
+        fechaNacido.setDate(null);
+        txtTelefonos.setText(null);
+        desHabilitarCampos();
     }
 
     @SuppressWarnings("unchecked")
@@ -223,22 +301,46 @@ public class reservas extends javax.swing.JDialog {
         jLabel12.setForeground(new java.awt.Color(51, 51, 255));
         jLabel12.setText("IDENTIFICACIÓN");
         getContentPane().add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(825, 110, -1, 20));
+
+        txtIdentificacion.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtIdentificacionKeyTyped(evt);
+            }
+        });
         getContentPane().add(txtIdentificacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(825, 135, 242, 36));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        if (guardar()) {
-            JOptionPane.showMessageDialog(null, "Registro Guardado con exito");
-        } else {
-            JOptionPane.showMessageDialog(null, "Ocurrio un error");
+        if (validarCamposGuardar()) {
+            if (guardar()) {
+                if (guardarReserva()) {
+                    JOptionPane.showMessageDialog(null, "Registro Guardado con exito");
+                    limpiarCampos();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Ocurrio un error");
+                }
+            }
+
         }
+
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
-        activarGuardarHuesped();
+        if (validarCamposReserva()) {
+            activarGuardarHuesped();
+
+        }
+
     }//GEN-LAST:event_btnSiguienteActionPerformed
+
+    private void txtIdentificacionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIdentificacionKeyTyped
+        char c = evt.getKeyChar();
+        if (c < '0' || c > '9') {
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtIdentificacionKeyTyped
 
     public static void main(String args[]) {
 

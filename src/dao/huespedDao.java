@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dao;
 
 import conexionBD.Conexion;
@@ -83,10 +78,8 @@ public class huespedDao {
             this.conn.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println("Error al cerrar la Conexion a la Base de Datos");
         }
     }
 
 }
-//"SELECT existencia FROM inventario WHERE id_inv=(SELECT MAX(id_inv) FROM inventario WHERE codigo_prod='"

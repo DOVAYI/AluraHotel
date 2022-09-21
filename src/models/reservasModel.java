@@ -43,9 +43,9 @@ public class reservasModel {
     public double valorTotalReservas() {
         double valorTotal = valor;
         LocalDate inicio = LocalDate.of(fechaInicio.getYear(),
-                fechaInicio.getMonthValue(), fechaInicio.getDayOfMonth()); // 1 de enero 2019
+                fechaInicio.getMonthValue(), fechaInicio.getDayOfMonth()); 
         LocalDate fin = LocalDate.of(fechaFin.getYear(),
-                fechaFin.getMonthValue(), fechaFin.getDayOfMonth());// 1 de enero 2020
+                fechaFin.getMonthValue(), fechaFin.getDayOfMonth());
 
         // Usando ChronoUnit, calculo el numero de dias
         double dias = DAYS.between(inicio, fin);
