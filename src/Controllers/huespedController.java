@@ -1,6 +1,7 @@
 package Controllers;
 
 import dao.huespedDao;
+import java.util.List;
 import models.huesped;
 
 public class huespedController {
@@ -17,13 +18,17 @@ public class huespedController {
         boolean rsp = huespedao.guardar(huesped);
         return rsp;
     }
-    
-    public int buscarMaximoIdReserva(){
+
+    public int buscarMaximoIdReserva() {
         return huespedao.buscarMaximoIdReserva();
     }
-    
-    public void cerrarConexion(){
-        huespedao.cerrarConexion();
+
+    public void cerrarConexion(int statement,int conexion) {
+        huespedao.cerrarConexion(statement,conexion);
+    }
+
+    public List<huesped> listar() {
+        return huespedao.listar();
     }
 
 }

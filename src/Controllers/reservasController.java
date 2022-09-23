@@ -1,6 +1,7 @@
 package Controllers;
 
 import dao.reservaDao;
+import java.util.List;
 import models.reservasModel;
 
 public class reservasController {
@@ -15,7 +16,11 @@ public class reservasController {
         return reservadao.guardar(reservas);
     }
 
-    public void cerrarConexion() {
-        reservadao.cerrarConexion();
+    public List<reservasModel> listar() {
+        return reservadao.listar();
+    }
+
+    public void cerrarConexion(int statement, int conexion) {
+        reservadao.cerrarConexion(statement, conexion);
     }
 }

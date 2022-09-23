@@ -10,6 +10,16 @@ public class reservasModel {
     private final double valor = 35000;
     private String formaPago;
     private int idHuesped;
+    private double valorTotalReserva;
+
+    public reservasModel(LocalDate fechaInicio, LocalDate fechaFin, String formaPago, double valorTotalReserva) {
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.formaPago = formaPago;
+        this.valorTotalReserva = valorTotalReserva;
+    }
+    
+    
 
     public reservasModel(LocalDate fechaInicio, LocalDate fechaFin, String formaPago, int idHuesped) {
         this.fechaInicio = fechaInicio;
@@ -39,6 +49,12 @@ public class reservasModel {
     public int getIdHuesped() {
         return idHuesped;
     }
+
+    public double getValorTotalReserva() {
+        return valorTotalReserva;
+    }
+    
+    
 
     public double valorTotalReservas() {
         double valorTotal = valor;

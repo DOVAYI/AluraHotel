@@ -9,6 +9,7 @@ import java.util.Date;
 import javax.swing.JOptionPane;
 import models.huesped;
 import models.reservasModel;
+import utilidades.convertirFechas;
 
 public class reservas extends javax.swing.JDialog {
 
@@ -53,8 +54,8 @@ public class reservas extends javax.swing.JDialog {
         if (aux > 0) {
             Date inicial = fechaInicial.getDate();
             if (inicial != null) {
-                LocalDate inicio = convertirFecha(inicial);
-                LocalDate fin = convertirFecha(fechaFinal.getDate());
+                LocalDate inicio = convertirFechas.fechasConvertir(inicial);
+                LocalDate fin = convertirFechas.fechasConvertir(fechaFinal.getDate());
                 reservamodel = new reservasModel(inicio, fin);
                 double total = reservamodel.valorTotalReservas();
 
@@ -72,25 +73,17 @@ public class reservas extends javax.swing.JDialog {
 
     }
 
-    private LocalDate convertirFecha(Date fecha) {
-        LocalDate fechaconvertida = Instant.ofEpochMilli(fecha.getTime())
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();;
-        return fechaconvertida;
-
-    }
-
     private boolean guardar() {
 
         boolean rsp = false;
         try {
-            LocalDate nacido = convertirFecha(fechaNacido.getDate());
+            LocalDate nacido = convertirFechas.fechasConvertir(fechaNacido.getDate());
 
             huesped huesped = new huesped(Integer.parseInt(txtIdentificacion.getText()),
                     txtNombres.getText(), nacido, txtTelefonos.getText());
             huespedcontroller = new huespedController();
             rsp = huespedcontroller.guardar(huesped);
-            huespedcontroller.cerrarConexion();
+            huespedcontroller.cerrarConexion(1,1);
         } catch (Exception dt) {
             JOptionPane.showMessageDialog(null, "Ocurrio un error" + dt.getMessage());
         }
@@ -101,8 +94,8 @@ public class reservas extends javax.swing.JDialog {
     private boolean guardarReserva() {
         boolean rsp = false;
         try {
-            LocalDate inicioFecha = convertirFecha(fechaInicial.getDate());
-            LocalDate finalFecha = convertirFecha(fechaFinal.getDate());
+            LocalDate inicioFecha = convertirFechas.fechasConvertir(fechaInicial.getDate());
+            LocalDate finalFecha = convertirFechas.fechasConvertir(fechaFinal.getDate());
 
             reservasModel reservas = new reservasModel(inicioFecha, finalFecha,
                     (String) comboFormaPago.getSelectedItem(),
@@ -110,7 +103,7 @@ public class reservas extends javax.swing.JDialog {
 
             reservacontroller = new reservasController();
             reservacontroller.guardarReserva(reservas);
-            reservacontroller.cerrarConexion();
+            reservacontroller.cerrarConexion(1,1);
             rsp = true;
         } catch (Exception e) {
             System.out.println("error " + e.getMessage());

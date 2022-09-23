@@ -6,6 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import models.reservasModel;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import utilidades.convertirFechas;
 
 
 public class reservaDao {
@@ -19,6 +23,39 @@ public class reservaDao {
         conn = conexion.retornaConexion();
     }
     
+     public List<reservasModel> listar() {
+        List<reservasModel> resultado = new ArrayList<>();
+
+        try {
+            final PreparedStatement statement = conn
+                    .prepareStatement("SELECT inicio,fin,valortotal,formapago FROM reservas");
+    
+            try {
+                statement.execute();
+    
+                final ResultSet resultSet = statement.getResultSet();
+    
+                try {
+                    while (resultSet.next()) {
+                        resultado.add(new reservasModel(
+                                convertirFechas.fechasConvertir(resultSet.getDate("inicio")),
+                                convertirFechas.fechasConvertir(resultSet.getDate("fin")),
+                                resultSet.getString("formapago"),
+                                resultSet.getDouble("valortotal")));
+                    }
+                }catch(Exception ex){
+                    System.out.println("error en resulset "+ex.getMessage());
+                }
+            }catch(Exception e){
+                System.out.println("error "+e.getMessage());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return resultado;
+    }
+     
     public boolean guardar(reservasModel reserva) {
         boolean resp = false;
         Date fechaInicio = Date.valueOf(reserva.getFechaInicio());
@@ -48,14 +85,16 @@ public class reservaDao {
         return resp;
     }
 
-    public void cerrarConexion() {
+    public void cerrarConexion(int statement, int conexion) {
         try {
-            this.stm.close();
-
-            this.conn.close();
+            if (statement == 1 && conexion == 1) {
+                this.stm.close();
+                this.conn.close();
+            } else if (statement == 0 && conexion == 1) {
+                this.conn.close();
+            }
 
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println("Error al cerrar la Conexion a la Base de Datos");
         }
     }
