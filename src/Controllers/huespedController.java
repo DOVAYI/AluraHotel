@@ -27,8 +27,8 @@ public class huespedController {
         huespedao.cerrarConexion(statement,conexion);
     }
 
-    public List<huesped> listar() {
-        return huespedao.listar();
+    public List<huesped> listar(int identificacion) {
+        return huespedao.listar(identificacion);
     }
 
 }

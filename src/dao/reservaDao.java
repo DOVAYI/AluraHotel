@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import utilidades.convertirFechas;
 
-
 public class reservaDao {
 
     private Conexion conexion;
@@ -22,19 +21,26 @@ public class reservaDao {
         conexion = new Conexion();
         conn = conexion.retornaConexion();
     }
-    
-     public List<reservasModel> listar() {
-        List<reservasModel> resultado = new ArrayList<>();
 
-        try {
-            final PreparedStatement statement = conn
-                    .prepareStatement("SELECT inicio,fin,valortotal,formapago FROM reservas");
     
+
+    public List<reservasModel> listar(int identificacion) {
+        List<reservasModel> resultado = new ArrayList<>();
+        String sql = "";
+        try {
+            if (identificacion == 0) {
+                sql = "SELECT inicio,fin,valortotal,formapago FROM reservas";
+            } else {
+                sql = "SELECT inicio,fin,valortotal,formapago FROM reservas WHERE idhuesped=" + identificacion;
+            }
+            final PreparedStatement statement = conn
+                    .prepareStatement(sql);
+
             try {
                 statement.execute();
-    
+
                 final ResultSet resultSet = statement.getResultSet();
-    
+
                 try {
                     while (resultSet.next()) {
                         resultado.add(new reservasModel(
@@ -43,11 +49,11 @@ public class reservaDao {
                                 resultSet.getString("formapago"),
                                 resultSet.getDouble("valortotal")));
                     }
-                }catch(Exception ex){
-                    System.out.println("error en resulset "+ex.getMessage());
+                } catch (Exception ex) {
+                    System.out.println("error en resulset " + ex.getMessage());
                 }
-            }catch(Exception e){
-                System.out.println("error "+e.getMessage());
+            } catch (Exception e) {
+                System.out.println("error " + e.getMessage());
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -55,7 +61,7 @@ public class reservaDao {
 
         return resultado;
     }
-     
+
     public boolean guardar(reservasModel reserva) {
         boolean resp = false;
         Date fechaInicio = Date.valueOf(reserva.getFechaInicio());

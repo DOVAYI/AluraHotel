@@ -21,12 +21,17 @@ public class huespedDao {
         conn = conexion.retornaConexion();
     }
 
-    public List<huesped> listar() {
+    public List<huesped> listar(int identificacion) {
         List<huesped> resultado = new ArrayList<>();
-
+        String sql = "";
         try {
+            if (identificacion == 0) {
+                sql = "SELECT identificacion,nombres,nacimiento,telefonos FROM huesped";
+            } else {
+                sql = "SELECT identificacion,nombres,nacimiento,telefonos FROM huesped WHERE identificacion=" + identificacion;
+            }
             final PreparedStatement statement = conn
-                    .prepareStatement("SELECT identificacion,nombres,nacimiento,telefonos FROM huesped");
+                    .prepareStatement(sql);
 
             try {
                 statement.execute();

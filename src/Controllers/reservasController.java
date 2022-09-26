@@ -16,11 +16,13 @@ public class reservasController {
         return reservadao.guardar(reservas);
     }
 
-    public List<reservasModel> listar() {
-        return reservadao.listar();
+    public List<reservasModel> listar(int identificacion) {
+        return reservadao.listar(identificacion);
     }
 
     public void cerrarConexion(int statement, int conexion) {
         reservadao.cerrarConexion(statement, conexion);
     }
+    
+    
 }
