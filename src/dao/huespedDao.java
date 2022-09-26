@@ -112,6 +112,22 @@ public class huespedDao {
         return resp;
     }
 
+    public boolean eliminar(int id) {
+        boolean rsp = false;
+        try {
+            final PreparedStatement statement = conn.prepareStatement("DELETE FROM huesped WHERE identificacion = ?");
+
+            statement.setInt(1, id);
+            statement.execute();
+            rsp = true;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return rsp;
+    }
+
     public void cerrarConexion(int statement, int conexion) {
         try {
             if (statement == 1 && conexion == 1) {

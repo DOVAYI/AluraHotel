@@ -14,6 +14,10 @@ public class sistemaBusqueda extends javax.swing.JDialog {
     private DefaultTableModel tablaModelo;
     private reservasController reservascontroller;
     private huespedController huesped;
+    private List<reservasModel> listaReservas;
+    private List<huesped> listaHuesped;
+    private String tablaSeleccionada = "";
+    DefaultTableModel modelo;
 
     public sistemaBusqueda(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -37,6 +41,7 @@ public class sistemaBusqueda extends javax.swing.JDialog {
                 columnas[3] = String.valueOf(reserva.getValorTotalReserva());
                 tablaModelo.addRow(columnas);
                 tablaHuespedReservas.setModel(tablaModelo);
+                tablaSeleccionada = "reserva";
             });
         }
 
@@ -48,7 +53,19 @@ public class sistemaBusqueda extends javax.swing.JDialog {
                 columnas[3] = String.valueOf(huesped.getTelefonos());
                 tablaModelo.addRow(columnas);
                 tablaHuespedReservas.setModel(tablaModelo);
+                tablaSeleccionada = "huesped";
             });
+        }
+
+        if ((reservas == null) && (huespedes == null)) {
+            columnas[0] = "";
+            columnas[1] = "";
+            columnas[2] = "";
+            columnas[3] = "";
+            tablaModelo.addRow(columnas);
+            tablaModelo.removeRow(0);
+            tablaHuespedReservas.setModel(tablaModelo);
+            tablaSeleccionada = "";
         }
 
     }
@@ -80,8 +97,50 @@ public class sistemaBusqueda extends javax.swing.JDialog {
                 iniciarTabla(cabeceraTablaReserva(), 4, reservaPorId, null);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Esta ingresando un numero demasiado grande ");
+            JOptionPane.showMessageDialog(null,
+                    "Esta ingresando un numero demasiado grande ");
             System.out.println("exception " + e.getMessage());
+        }
+
+    }
+
+    private void eliminarReservaPorId(int fila) {
+        try {
+            int idHuesped = reservascontroller.listar(0).
+                    get(fila).getIdHuesped();
+
+            if (reservascontroller.eliminar(idHuesped)) {
+                JOptionPane.showMessageDialog(null,
+                        "Registro Eliminado con exito");
+                listaReservas = reservascontroller.listar(0);
+                if (listaReservas.size() == 0) {
+                    listaReservas = null;
+                }
+                iniciarTabla(cabeceraTablaReserva(), 4,
+                        listaReservas, null);
+
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo Eliminar Reserva");
+            }
+        } catch (Exception e) {
+            System.out.println("error metodo eliminarReservaPorId " + e.getMessage());
+        }
+
+    }
+
+    private void eliminarHuespedPorId(int fila) {
+        modelo = (DefaultTableModel) tablaHuespedReservas.getModel();
+        boolean rsp = huesped.eliminar(Integer.parseInt(modelo.getValueAt(fila, 0)
+                .toString()));
+        if (rsp) {
+            JOptionPane.showMessageDialog(null, "Huesped Eliminad con Exito");
+            listaHuesped = huesped.listar(0);
+            if (listaHuesped.size() == 0) {
+                listaHuesped = null;
+            }
+            iniciarTabla(cabeceraTablaHuesped(), 4, null, listaHuesped);
+        } else {
+            JOptionPane.showMessageDialog(null, "Error al eliminar Huesped");
         }
 
     }
@@ -99,7 +158,8 @@ public class sistemaBusqueda extends javax.swing.JDialog {
                 iniciarTabla(cabeceraTablaHuesped(), 4, null, huespedPorId);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Esta ingresando un numero demasiado grande ");
+            JOptionPane.showMessageDialog(null,
+                    "Esta ingresando un numero demasiado grande ");
             System.out.println("exception " + e.getMessage());
         }
 
@@ -113,9 +173,9 @@ public class sistemaBusqueda extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaHuespedReservas = new javax.swing.JTable();
         btnReservas = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
         btnHuesped = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         txtBuscar = new javax.swing.JTextField();
@@ -156,11 +216,11 @@ public class sistemaBusqueda extends javax.swing.JDialog {
         });
         panel2.add(btnReservas, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 120, 110, 40));
 
-        jButton2.setBackground(new java.awt.Color(0, 204, 204));
-        jButton2.setFont(new java.awt.Font("Gabriola", 1, 28)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Editar");
-        panel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 430, 200, 40));
+        btnEditar.setBackground(new java.awt.Color(0, 204, 204));
+        btnEditar.setFont(new java.awt.Font("Gabriola", 1, 28)); // NOI18N
+        btnEditar.setForeground(new java.awt.Color(255, 255, 255));
+        btnEditar.setText("Editar");
+        panel2.add(btnEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 430, 200, 40));
 
         btnHuesped.setBackground(new java.awt.Color(0, 0, 204));
         btnHuesped.setFont(new java.awt.Font("Gabriola", 1, 24)); // NOI18N
@@ -173,11 +233,16 @@ public class sistemaBusqueda extends javax.swing.JDialog {
         });
         panel2.add(btnHuesped, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 120, 110, 40));
 
-        jButton4.setBackground(new java.awt.Color(255, 51, 51));
-        jButton4.setFont(new java.awt.Font("Gabriola", 1, 28)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(255, 255, 255));
-        jButton4.setText("Eliminar");
-        panel2.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 430, 200, 40));
+        btnEliminar.setBackground(new java.awt.Color(255, 51, 51));
+        btnEliminar.setFont(new java.awt.Font("Gabriola", 1, 28)); // NOI18N
+        btnEliminar.setForeground(new java.awt.Color(255, 255, 255));
+        btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
+        panel2.add(btnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 430, 200, 40));
 
         btnSalir.setBackground(new java.awt.Color(0, 255, 51));
         btnSalir.setFont(new java.awt.Font("Gabriola", 1, 24)); // NOI18N
@@ -229,8 +294,11 @@ public class sistemaBusqueda extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnReservasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReservasActionPerformed
-
-        iniciarTabla(cabeceraTablaReserva(), 4, reservascontroller.listar(0), null);
+        listaReservas = reservascontroller.listar(0);
+        if (listaReservas.size() == 0) {
+            listaReservas = null;
+        }
+        iniciarTabla(cabeceraTablaReserva(), 4, listaReservas, null);
 
     }//GEN-LAST:event_btnReservasActionPerformed
 
@@ -241,8 +309,11 @@ public class sistemaBusqueda extends javax.swing.JDialog {
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void btnHuespedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuespedActionPerformed
-
-        iniciarTabla(cabeceraTablaHuesped(), 4, null, huesped.listar(0));
+        listaHuesped = huesped.listar(0);
+        if (listaHuesped.size() == 0) {
+            listaHuesped = null;
+        }
+        iniciarTabla(cabeceraTablaHuesped(), 4, null, listaHuesped);
 
     }//GEN-LAST:event_btnHuespedActionPerformed
 
@@ -255,24 +326,53 @@ public class sistemaBusqueda extends javax.swing.JDialog {
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         if (txtBuscar.getText().isEmpty()
-                || comboHuespedOrReserva.getSelectedItem().equals("Seleccione")) {
+                || comboHuespedOrReserva.getSelectedItem().
+                        equals("Seleccione")) {
             JOptionPane.showMessageDialog(null,
-                    "Debe ingresar el numero de identificación y/ó elegir tipo de busqueda");
+                    "Debe ingresar el numero de identificación "
+                    + "y/ó elegir tipo de busqueda");
             txtBuscar.requestFocus();
         } else {
             if (comboHuespedOrReserva.getSelectedItem().equals("Huesped")) {
                 buscarHuespedPorId();
-            } else if (comboHuespedOrReserva.getSelectedItem().equals("Reserva")) {
+            } else if (comboHuespedOrReserva.getSelectedItem().
+                    equals("Reserva")) {
                 buscarReservaPorId();
             }
         }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        if (!tablaSeleccionada.equals("")) {
+            int filaSeleccionada = tablaHuespedReservas.getSelectedRow();
+            if (tablaSeleccionada.equals("reserva")) {
+                if (filaSeleccionada == -1) {
+                    JOptionPane.showMessageDialog(null,
+                            "Debe seleccionar una fila de tabla,"
+                            + " para eliminar registro");
+                } else {
+                    eliminarReservaPorId(filaSeleccionada);
+                }
+            } else {
+                if (filaSeleccionada == -1) {
+                    JOptionPane.showMessageDialog(null,
+                            "Debe seleccionar una fila de tabla,"
+                            + " para eliminar registro");
+                } else {
+                    eliminarHuespedPorId(filaSeleccionada);
+                }
+            }
+
+        }
+
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
     public static void main(String args[]) {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                sistemaBusqueda dialog = new sistemaBusqueda(new javax.swing.JFrame(), true);
+                sistemaBusqueda dialog = new sistemaBusqueda(
+                        new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -286,12 +386,12 @@ public class sistemaBusqueda extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnEditar;
+    private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnHuesped;
     private javax.swing.JButton btnReservas;
     private javax.swing.JButton btnSalir;
     private javax.swing.JComboBox<String> comboHuespedOrReserva;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;

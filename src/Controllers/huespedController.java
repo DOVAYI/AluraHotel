@@ -22,13 +22,19 @@ public class huespedController {
     public int buscarMaximoIdReserva() {
         return huespedao.buscarMaximoIdReserva();
     }
+    
+    public List<huesped> listar(int identificacion) {
+        return huespedao.listar(identificacion);
+    }
+    
+    public boolean eliminar(int identificacion){
+        return huespedao.eliminar(identificacion);
+    }
 
     public void cerrarConexion(int statement,int conexion) {
         huespedao.cerrarConexion(statement,conexion);
     }
 
-    public List<huesped> listar(int identificacion) {
-        return huespedao.listar(identificacion);
-    }
+    
 
 }

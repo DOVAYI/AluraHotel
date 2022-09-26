@@ -22,16 +22,14 @@ public class reservaDao {
         conn = conexion.retornaConexion();
     }
 
-    
-
     public List<reservasModel> listar(int identificacion) {
         List<reservasModel> resultado = new ArrayList<>();
         String sql = "";
         try {
             if (identificacion == 0) {
-                sql = "SELECT inicio,fin,valortotal,formapago FROM reservas";
+                sql = "SELECT inicio,fin,valortotal,formapago,idhuesped FROM reservas";
             } else {
-                sql = "SELECT inicio,fin,valortotal,formapago FROM reservas WHERE idhuesped=" + identificacion;
+                sql = "SELECT inicio,fin,valortotal,formapago,idhuesped FROM reservas WHERE idhuesped=" + identificacion;
             }
             final PreparedStatement statement = conn
                     .prepareStatement(sql);
@@ -42,23 +40,28 @@ public class reservaDao {
                 final ResultSet resultSet = statement.getResultSet();
 
                 try {
-                    while (resultSet.next()) {
-                        resultado.add(new reservasModel(
-                                convertirFechas.fechasConvertir(resultSet.getDate("inicio")),
-                                convertirFechas.fechasConvertir(resultSet.getDate("fin")),
-                                resultSet.getString("formapago"),
-                                resultSet.getDouble("valortotal")));
+                    if (resultSet != null) {
+                        while (resultSet.next()) {
+                            resultado.add(new reservasModel(
+                                    convertirFechas.fechasConvertir(resultSet.getDate("inicio")),
+                                    convertirFechas.fechasConvertir(resultSet.getDate("fin")),
+                                    resultSet.getString("formapago"),
+                                    resultSet.getDouble("valortotal"),
+                                    resultSet.getInt("idhuesped")
+                            ));
+                        }
                     }
+
                 } catch (Exception ex) {
                     System.out.println("error en resulset " + ex.getMessage());
                 }
             } catch (Exception e) {
-                System.out.println("error " + e.getMessage());
+                System.out.println("error en reserva dao " + e.getMessage());
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
+        System.out.println(" en dao resultado "+ resultado);
         return resultado;
     }
 
@@ -89,6 +92,22 @@ public class reservaDao {
         }
 
         return resp;
+    }
+
+    public boolean eliminar(int id) {
+        boolean rsp = false;
+        try {
+            final PreparedStatement statement = conn.prepareStatement("DELETE FROM reservas WHERE idhuesped = ?");
+
+            statement.setInt(1, id);
+            statement.execute();
+            rsp = true;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return rsp;
     }
 
     public void cerrarConexion(int statement, int conexion) {

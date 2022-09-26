@@ -23,6 +23,9 @@ public class reservasController {
     public void cerrarConexion(int statement, int conexion) {
         reservadao.cerrarConexion(statement, conexion);
     }
-    
-    
+
+    public boolean eliminar(int id) {
+        return reservadao.eliminar(id);
+    }
+
 }

@@ -12,11 +12,12 @@ public class reservasModel {
     private int idHuesped;
     private double valorTotalReserva;
 
-    public reservasModel(LocalDate fechaInicio, LocalDate fechaFin, String formaPago, double valorTotalReserva) {
+    public reservasModel(LocalDate fechaInicio, LocalDate fechaFin, String formaPago, double valorTotalReserva,int idHuesped) {
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.formaPago = formaPago;
         this.valorTotalReserva = valorTotalReserva;
+        this.idHuesped=idHuesped;
     }
     
     
