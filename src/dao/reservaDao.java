@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import models.reservasModel;
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import utilidades.convertirFechas;
@@ -92,6 +93,35 @@ public class reservaDao {
         }
 
         return resp;
+    }
+    
+    public boolean modificar(LocalDate fechainicial,LocalDate fechafinal, double valortotal, String formapago,int id) {
+        boolean rsp=false;
+        try {
+            final PreparedStatement statement = conn.prepareStatement(
+                    "UPDATE reservas SET "
+                    + " inicio = ?, "
+                    + " fin = ?,"
+                    + " valortotal = ?,"
+                    + " formapago = ?"        
+                    + " WHERE idhuesped = ?");
+
+           
+                statement.setDate(1, Date.valueOf(fechainicial));
+                statement.setDate(2, Date.valueOf(fechafinal));
+                statement.setDouble(3, valortotal);
+                statement.setString(4, formapago);
+                statement.setInt(5, id);
+                statement.execute();
+                rsp=true;
+
+                
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        
+        return rsp;
     }
 
     public boolean eliminar(int id) {

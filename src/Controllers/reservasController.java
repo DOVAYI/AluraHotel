@@ -1,6 +1,7 @@
 package Controllers;
 
 import dao.reservaDao;
+import java.time.LocalDate;
 import java.util.List;
 import models.reservasModel;
 
@@ -20,12 +21,18 @@ public class reservasController {
         return reservadao.listar(identificacion);
     }
 
-    public void cerrarConexion(int statement, int conexion) {
-        reservadao.cerrarConexion(statement, conexion);
+    public boolean modificar(LocalDate fechainicial, LocalDate fechafinal,
+            double valortotal, String formapago, int id) {
+        return reservadao.modificar(fechainicial, fechafinal,
+                valortotal, formapago, id);
     }
 
     public boolean eliminar(int id) {
         return reservadao.eliminar(id);
+    }
+
+    public void cerrarConexion(int statement, int conexion) {
+        reservadao.cerrarConexion(statement, conexion);
     }
 
 }

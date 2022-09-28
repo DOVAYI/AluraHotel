@@ -2,9 +2,11 @@ package dao;
 
 import conexionBD.Conexion;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import models.huesped;
@@ -110,6 +112,33 @@ public class huespedDao {
         }
 
         return resp;
+    }
+    
+    public boolean modificar(String nombres,LocalDate nacimiento, String telefonos, int id) {
+        boolean rsp=false;
+        try {
+            final PreparedStatement statement = conn.prepareStatement(
+                    "UPDATE huesped SET "
+                    + " nombres = ?, "
+                    + " nacimiento = ?,"
+                    + " telefonos = ?"       
+                    + " WHERE identificacion = ?");
+
+           
+                statement.setString(1, nombres);
+                statement.setDate(2, Date.valueOf(nacimiento));
+                statement.setString(3, telefonos);
+                statement.setInt(4, id);
+                statement.execute();
+                rsp=true;
+
+                
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        
+        return rsp;
     }
 
     public boolean eliminar(int id) {

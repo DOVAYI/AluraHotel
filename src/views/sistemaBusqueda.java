@@ -2,12 +2,15 @@ package views;
 
 import Controllers.huespedController;
 import Controllers.reservasController;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import models.huesped;
 import models.reservasModel;
+import utilidades.convertirFechas;
 
 public class sistemaBusqueda extends javax.swing.JDialog {
 
@@ -100,6 +103,47 @@ public class sistemaBusqueda extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null,
                     "Esta ingresando un numero demasiado grande ");
             System.out.println("exception " + e.getMessage());
+        }
+
+    }
+
+    private void editarReservaPorId(int fila) {
+        modelo = (DefaultTableModel) tablaHuespedReservas.getModel();
+        int idHuesped = reservascontroller.listar(0).
+                get(fila).getIdHuesped();
+
+        LocalDate inicial = convertirFechas.fechasConvertir(
+                Date.valueOf(modelo.getValueAt(fila, 0).toString()));
+        LocalDate finalfecha = convertirFechas.fechasConvertir(
+                Date.valueOf(modelo.getValueAt(fila, 1).toString()));
+        double pago = Double.parseDouble(modelo.getValueAt(fila, 3)
+                .toString());
+
+        boolean rsp = reservascontroller.modificar(inicial, finalfecha, pago,
+                modelo.getValueAt(fila, 2).toString(), idHuesped);
+
+        if (rsp) {
+            JOptionPane.showMessageDialog(null, "Registro Editado con exito");
+            iniciarTabla(cabeceraTablaHuesped(), 4, reservascontroller.listar(0), null);
+        } else {
+            JOptionPane.showMessageDialog(null, "No se pudo Editar Registro");
+        }
+    }
+
+    private void editarHuespedPorId(int fila) {
+        modelo = (DefaultTableModel) tablaHuespedReservas.getModel();
+        LocalDate nacimiento = convertirFechas.fechasConvertir(
+                Date.valueOf(modelo.getValueAt(fila, 2).toString()));
+
+        int identificacion = Integer.parseInt(modelo.getValueAt(fila, 0).toString());
+        boolean rsp = huesped.modificar(modelo.getValueAt(fila, 1).toString(), nacimiento,
+                modelo.getValueAt(fila, 3).toString(), identificacion);
+
+        if (rsp) {
+            JOptionPane.showMessageDialog(null, "Registro Editado con exito");
+            iniciarTabla(cabeceraTablaHuesped(), 4, null, huesped.listar(0));
+        } else {
+            JOptionPane.showMessageDialog(null, "No se pudo Editar Registro");
         }
 
     }
@@ -220,6 +264,11 @@ public class sistemaBusqueda extends javax.swing.JDialog {
         btnEditar.setFont(new java.awt.Font("Gabriola", 1, 28)); // NOI18N
         btnEditar.setForeground(new java.awt.Color(255, 255, 255));
         btnEditar.setText("Editar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
         panel2.add(btnEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 430, 200, 40));
 
         btnHuesped.setBackground(new java.awt.Color(0, 0, 204));
@@ -366,6 +415,30 @@ public class sistemaBusqueda extends javax.swing.JDialog {
         }
 
     }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        if (!tablaSeleccionada.equals("")) {
+            int filaSeleccionada = tablaHuespedReservas.getSelectedRow();
+            if (tablaSeleccionada.equals("reserva")) {
+                if (filaSeleccionada == -1) {
+                    JOptionPane.showMessageDialog(null,
+                            "Debe seleccionar una fila de tabla,"
+                            + " para eliminar registro");
+                } else {
+                    editarReservaPorId(filaSeleccionada);
+                }
+            } else {
+                if (filaSeleccionada == -1) {
+                    JOptionPane.showMessageDialog(null,
+                            "Debe seleccionar una fila de tabla,"
+                            + " para eliminar registro");
+                } else {
+                    editarHuespedPorId(filaSeleccionada);
+                }
+            }
+
+        }
+    }//GEN-LAST:event_btnEditarActionPerformed
 
     public static void main(String args[]) {
 
