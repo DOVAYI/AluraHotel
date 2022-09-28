@@ -14,13 +14,15 @@ public class registroUsuarios extends javax.swing.JDialog {
         initComponents();
         setSize(1050, 560);
         setLocationRelativeTo(this);
+        lblMensaje.setVisible(false);
     }
 
     private boolean validarCampos() {
         boolean rsp = false;
 
         String password = String.valueOf(txtPassword.getPassword());
-        String repetirPassword = String.valueOf(txtRepetirPassword.getPassword());
+        String repetirPassword = String
+                .valueOf(txtRepetirPassword.getPassword());
 
         if (txtUsuario.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Debe ingresar un usuario");
@@ -37,11 +39,27 @@ public class registroUsuarios extends javax.swing.JDialog {
         return rsp;
     }
 
+    private void limpiarCampos() {
+        txtUsuario.setText(null);
+        txtPassword.setText(null);
+        txtRepetirPassword.setText(null);
+    }
+
     private void guardar() {
 
-        usuariosModel usuariosmodel = new usuariosModel(txtUsuario.getText(), txtPassword.getPassword().toString());
+        usuariosModel usuariosmodel = new usuariosModel(txtUsuario.getText(),
+                String.valueOf(txtPassword.getPassword()));
         usuarios = new usuariosController();
-        usuarios.guardar(usuariosmodel);
+        boolean rsp = usuarios.guardar(usuariosmodel);
+        if (rsp) {
+            JOptionPane.showMessageDialog(null,
+                    "Usuario guardado con ¡EXITO! :)");
+            limpiarCampos();
+            lblMensaje.setVisible(false);
+        } else {
+            lblMensaje.setVisible(true);
+
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -58,8 +76,10 @@ public class registroUsuarios extends javax.swing.JDialog {
         txtRepetirPassword = new javax.swing.JPasswordField();
         jLabel4 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        lblMensaje = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        btnSalir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -100,17 +120,33 @@ public class registroUsuarios extends javax.swing.JDialog {
         jLabel1.setText("Repetir contraseña");
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 290, -1, 20));
 
-        jLabel5.setFont(new java.awt.Font("Gabriola", 1, 18)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("Usuario o Nombre que utilizara para ingresar al sistema");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 95, -1, 20));
+        lblMensaje.setFont(new java.awt.Font("Gabriola", 1, 28)); // NOI18N
+        lblMensaje.setForeground(new java.awt.Color(255, 255, 255));
+        lblMensaje.setText("No se pudo Guardar Usuario");
+        jPanel1.add(lblMensaje, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 460, -1, 20));
 
         jLabel6.setFont(new java.awt.Font("Gabriola", 1, 18)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Escriba contraseña ");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, 20));
 
+        jLabel7.setFont(new java.awt.Font("Gabriola", 1, 18)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setText("Usuario o Nombre que utilizara para ingresar al sistema");
+        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 95, -1, 20));
+
         panelImage1.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 390, 490));
+
+        btnSalir.setBackground(new java.awt.Color(255, 255, 255));
+        btnSalir.setFont(new java.awt.Font("Gabriola", 1, 24)); // NOI18N
+        btnSalir.setForeground(new java.awt.Color(0, 0, 255));
+        btnSalir.setText("Salir");
+        btnSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalirActionPerformed(evt);
+            }
+        });
+        panelImage1.add(btnSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 410, 150, 50));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -128,21 +164,33 @@ public class registroUsuarios extends javax.swing.JDialog {
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         if (validarCampos()) {
-            if (String.valueOf(txtPassword.getPassword()).equals(String.valueOf(txtRepetirPassword.getPassword()))) {
+            if (String.valueOf(txtPassword.getPassword()).equals(String
+                    .valueOf(txtRepetirPassword.getPassword()))) {
                 guardar();
             } else {
-                JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden");
+                JOptionPane.showMessageDialog(null,
+                        "Las contraseñas no coinciden");
             }
 
         }
 
     }//GEN-LAST:event_btnGuardarActionPerformed
 
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+        try {
+            usuarios.cerrarConexion(1, 1);
+            this.dispose();
+        } catch (Exception e) {
+            this.dispose();
+        }
+    }//GEN-LAST:event_btnSalirActionPerformed
+
     public static void main(String args[]) {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                registroUsuarios dialog = new registroUsuarios(new javax.swing.JFrame(), true);
+                registroUsuarios dialog
+                        = new registroUsuarios(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -156,13 +204,15 @@ public class registroUsuarios extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnSalir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel lblMensaje;
     private org.edisoncor.gui.panel.PanelImage panelImage1;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JPasswordField txtRepetirPassword;

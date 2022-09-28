@@ -27,7 +27,7 @@ public class ventanaMenu extends javax.swing.JFrame {
     }
 
     public void llenarMenu() {
-        List<Avatar> avatars = new ArrayList<Avatar>();
+        List<Avatar> avatars = new ArrayList<>();
         
         avatars.add(new Avatar("Cambiar Clave", loadImage("/img/clave.png")));
         avatars.add(new Avatar("Backup base de datos", loadImage("/img/respaldo_de_la_babase_de_datos.png")));

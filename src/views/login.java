@@ -1,17 +1,36 @@
-
 package views;
+
+import Controllers.usuariosController;
+import javax.swing.JOptionPane;
+import models.usuariosModel;
 
 public class login extends javax.swing.JDialog {
 
-    
+    usuariosModel usuario;
+    usuariosController usuarioController;
+
     public login(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setSize(1050, 550);
         setLocationRelativeTo(this);
+        usuarioController = new usuariosController();
     }
 
-   
+    private void ingresar() {
+        usuario = new usuariosModel(txtUsuario.getText(), String.valueOf(txtPassword.getPassword()));
+        boolean rsp = usuarioController.validarAcceso(usuario);
+        if (rsp) {
+            ventanaMenu menu = new ventanaMenu();
+            menu.setVisible(true);
+            usuarioController.cerrarConexion(0, 1);
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, "Usuario y/ó Contraseña incorrecta");
+        }
+
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -47,6 +66,11 @@ public class login extends javax.swing.JDialog {
         btnIngresar.setFont(new java.awt.Font("Gabriola", 1, 24)); // NOI18N
         btnIngresar.setForeground(new java.awt.Color(0, 0, 204));
         btnIngresar.setText("Ingresar");
+        btnIngresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnIngresarActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnIngresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 330, -1, -1));
 
         panelImage1.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 390, 460));
@@ -65,9 +89,19 @@ public class login extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
+    private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarActionPerformed
+        if (txtUsuario.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Debe Ingresar Usuario ");
+        } else if (String.valueOf(txtPassword.getPassword()).equals("")) {
+            JOptionPane.showMessageDialog(null, "Debe escribir contraseña");
+        } else {
+            ingresar();
+        }
+
+    }//GEN-LAST:event_btnIngresarActionPerformed
+
     public static void main(String args[]) {
-       
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 login dialog = new login(new javax.swing.JFrame(), true);

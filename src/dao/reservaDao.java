@@ -49,11 +49,12 @@ public class reservaDao {
                                     resultSet.getString("formapago"),
                                     resultSet.getDouble("valortotal"),
                                     resultSet.getInt("idhuesped")
+                    
                             ));
                         }
                     }
 
-                } catch (Exception ex) {
+                } catch (SQLException ex) {
                     System.out.println("error en resulset " + ex.getMessage());
                 }
             } catch (Exception e) {
