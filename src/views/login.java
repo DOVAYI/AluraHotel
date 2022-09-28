@@ -22,6 +22,7 @@ public class login extends javax.swing.JDialog {
         boolean rsp = usuarioController.validarAcceso(usuario);
         if (rsp) {
             ventanaMenu menu = new ventanaMenu();
+            menu.cargarUsuarioSistema(usuario);
             menu.setVisible(true);
             usuarioController.cerrarConexion(0, 1);
             this.dispose();

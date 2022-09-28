@@ -1,7 +1,5 @@
 package models;
 
-import utilidades.encriptar;
-
 public class usuariosModel {
 
     private String usuario;
@@ -17,7 +15,7 @@ public class usuariosModel {
     }
 
     public String getPassword() {
-        //String password = encriptar.getHash(usuario);
+
         return password;
     }
 

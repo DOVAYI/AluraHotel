@@ -20,6 +20,11 @@ public class usuariosController {
         return usuariosdao.validarAcceso(usuarios);
     }
     
+    public boolean modificar(String usuario, String newPassword) {
+       
+        return usuariosdao.modificar(usuario, newPassword);
+    }
+    
     public void cerrarConexion(int statement, int conexion) {
         usuariosdao.cerrarConexion(statement, conexion);
     }

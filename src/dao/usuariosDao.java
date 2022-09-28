@@ -107,8 +107,28 @@ public class usuariosDao {
 
         return rsp;
     }
-    
-     public void cerrarConexion(int statement, int conexion) {
+
+    public boolean modificar(String usuario, String newPassword) {
+        boolean rsp = false;
+        try {
+            final PreparedStatement statement = conn.prepareStatement(
+                    "UPDATE usuarios SET "
+                    + " password = ? "
+                    + " WHERE usuario= ?");
+
+            statement.setString(1, encriptar.getHash(newPassword));
+            statement.setString(2, usuario);
+            statement.execute();
+            rsp = true;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return rsp;
+    }
+
+    public void cerrarConexion(int statement, int conexion) {
         try {
             if (statement == 1 && conexion == 1) {
                 this.stm.close();

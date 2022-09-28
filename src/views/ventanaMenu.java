@@ -1,23 +1,18 @@
 package views;
 
 import java.awt.Image;
-import java.awt.event.KeyEvent;
-import java.sql.ResultSet;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
+import models.usuariosModel;
 import org.edisoncor.gui.util.Avatar;
 
 public class ventanaMenu extends javax.swing.JFrame {
 
-    
-    
+    private usuariosModel usuariosmodel;
 
     public ventanaMenu() {
-        
 
         initComponents();
         setLocationRelativeTo(this);
@@ -26,12 +21,15 @@ public class ventanaMenu extends javax.swing.JFrame {
 
     }
 
-    public void llenarMenu() {
+    public void cargarUsuarioSistema(usuariosModel usuario) {
+        usuariosmodel = usuario;
+    }
+
+    private void llenarMenu() {
         List<Avatar> avatars = new ArrayList<>();
-        
+
         avatars.add(new Avatar("Cambiar Clave", loadImage("/img/clave.png")));
-        avatars.add(new Avatar("Backup base de datos", loadImage("/img/respaldo_de_la_babase_de_datos.png")));
-        avatars.add(new Avatar("Informes Reservas", loadImage("/img/informes.png")));
+        avatars.add(new Avatar("Ver Reservas y Huespedes", loadImage("/img/informes.png")));
         avatars.add(new Avatar("Reservas", loadImage("/img/pedidos y despacho.png")));
         avatars.add(new Avatar("Usuarios de Sistema", loadImage("/img/datos empleados.png")));
         avatars.add(new Avatar("Salir del Sistema", loadImage("/img/salir.png")));
@@ -47,43 +45,32 @@ public class ventanaMenu extends javax.swing.JFrame {
             return null;
         }
     }
-    public static String tipo;
-
-   
-
-    
 
     public int Modulo(int index) {
-        
+
         switch (index) {
+
             case 0:
-                
+                actualizarClave upClave = new actualizarClave(null, true);
+                upClave.mostrarUsuario(usuariosmodel.getUsuario());
+                upClave.setVisible(true);
                 break;
             case 1:
-                
+                sistemaBusqueda verHuespedReservas = new sistemaBusqueda(null, true);
+                verHuespedReservas.setVisible(true);
                 break;
             case 2:
-                
+                reservas reserva = new reservas(null, true);
+                reserva.setVisible(true);
+
                 break;
             case 3:
-                
+                registroUsuarios registrousuarios = new registroUsuarios(null, true);
+                registrousuarios.setVisible(true);
 
                 break;
             case 4:
-                
-
-                break;
-            case 5:
-                
-
-                break;
-            case 6:
-                
-
-                break;
-            case 7:
-                
-
+                this.dispose();
                 break;
 
         }
@@ -109,9 +96,6 @@ public class ventanaMenu extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 menuMouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                menuMouseEntered(evt);
-            }
         });
         menu.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -125,16 +109,6 @@ public class ventanaMenu extends javax.swing.JFrame {
         buttonIpod1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 buttonIpod1MouseClicked(evt);
-            }
-        });
-        buttonIpod1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonIpod1ActionPerformed(evt);
-            }
-        });
-        buttonIpod1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                buttonIpod1KeyPressed(evt);
             }
         });
         menu.add(buttonIpod1, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 260, 247, 261));
@@ -153,15 +127,6 @@ private void menuKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_menu
         llenarMenu();
     }//GEN-LAST:event_menuMouseClicked
 
-    private void menuMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuMouseEntered
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_menuMouseEntered
-
-    private void buttonIpod1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonIpod1ActionPerformed
-
-    }//GEN-LAST:event_buttonIpod1ActionPerformed
-
     private void buttonIpod1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonIpod1MouseClicked
         // TODO add your handling code here:
         int eleccion = JOptionPane.showConfirmDialog(null, "¿Estas seguro que quieres entrar a este modulo"
@@ -173,14 +138,6 @@ private void menuKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_menu
         }
 
     }//GEN-LAST:event_buttonIpod1MouseClicked
-
-    private void buttonIpod1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buttonIpod1KeyPressed
-        // TODO add your handling code here:
-
-        if (evt.getKeyCode() == KeyEvent.VK_RIGHT) {
-
-        }
-    }//GEN-LAST:event_buttonIpod1KeyPressed
 
     /**
      * @param args the command line arguments
